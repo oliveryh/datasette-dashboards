@@ -20,6 +20,13 @@ plugins:
         date_end:
           name: Date End
           type: date
+        dropdown_filter:
+          name: test
+          type: dropdown
+          db: jobs
+          query: SELECT name FROM contracts ORDER BY name ASC
+          options:
+            - A
       charts:
         analysis-note:
           library: markdown

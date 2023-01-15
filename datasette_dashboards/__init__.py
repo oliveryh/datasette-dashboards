@@ -64,6 +64,23 @@ def fill_chart_query_options(chart, options_keys):
 
     chart["query"] = query
 
+async def fill_dashboard_filter_dropdowns(dashboard, request, datasette):
+    filters = dashboard.get("filters")
+    if filters is None:
+        return
+
+    for _, filter in filters.items():
+        if filter.get('type') == 'dropdown':
+            import urllib.parse
+            db = filter.get('db')
+            query = filter.get('query')
+            value_key = 'name'
+            response = await datasette.client.get(f'/{db}.json?' + urllib.parse.urlencode({"sql": query, "_shape": "array"}))
+            filter['options'] = [
+                row[value_key] for row in response.json()
+            ]
+    return
+    
 
 async def dashboard_list(request, datasette):
     await check_permission_instance(request, datasette)
@@ -97,6 +114,8 @@ async def dashboard_view(request, datasette):
     options_keys = get_dashboard_filters_keys(request, dashboard)
     query_parameters = get_dashboard_filters(request, options_keys)
     query_string = generate_dashboard_filters_qs(request, options_keys)
+
+    await fill_dashboard_filter_dropdowns(dashboard, request, datasette)
 
     for chart in dashboard["charts"].values():
         fill_chart_query_options(chart, options_keys)
@@ -138,6 +157,7 @@ async def dashboard_chart(request, datasette):
 
     options_keys = get_dashboard_filters_keys(request, dashboard)
     query_string = generate_dashboard_filters_qs(request, options_keys)
+    await fill_dashboard_filter_dropdowns(dashboard, request, datasette)
     fill_chart_query_options(chart, options_keys)
 
     return Response.html(
