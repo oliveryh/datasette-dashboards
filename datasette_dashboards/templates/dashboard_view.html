@@ -60,7 +60,7 @@
           <label for="{{ key }}">{{ dfilter.name }}</label>
           <select name="{{ key }}" id="{{ key }}">
             {% for option in dfilter.options %}
-            <option value="{{ option }}">{{ option }}</option>
+            <option value="{{ option }}" {% if key in query_parameters.keys() and option == query_parameters[key] %}{{ 'selected' }}{% endif %}>{{ option }}</option>
             {% endfor %}
           </select>
         </p>
