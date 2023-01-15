@@ -1,5 +1,20 @@
 function renderVegaChart(el, chart, query_string, base_url, height_style = undefined) {
   const query = encodeURIComponent(chart.query)
+  const deepSearch = (target) => {
+    if (typeof target === 'object') {
+      for (let key in target) {
+        if (typeof target[key] === 'object') {
+          deepSearch(target[key]);
+        } else {
+          if (key === 'url') {
+            target[key] = `${base_url}${chart.db}.csv?sql=${query}&${query_string}`
+          }
+        }
+      }
+    }
+    return target
+  }
+  deepSearch(chart.display)
   const spec = {
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     description: chart.title,
