@@ -1,4 +1,4 @@
-function renderVegaChart(el, chart, query_string, height_style = undefined) {
+function renderVegaChart(el, chart, query_string, base_url, height_style = undefined) {
   const query = encodeURIComponent(chart.query)
   const spec = {
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
@@ -16,7 +16,7 @@ function renderVegaChart(el, chart, query_string, height_style = undefined) {
       }
     },
     data: {
-      url: `/${chart.db}.csv?sql=${query}&${query_string}`,
+      url: `${base_url}${chart.db}.csv?sql=${query}&${query_string}`,
       format: {'type': 'csv'}
     },
     ...chart.display

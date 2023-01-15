@@ -50,7 +50,7 @@
     <script src="{{ urls.static_plugins('datasette_dashboards', 'dashboards.js') }}"></script>
     <script type="text/javascript">
       {% if chart.library == 'vega' %}
-      renderVegaChart('#chart', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}', 'container')
+      renderVegaChart('#chart', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}', '{{ base_url }}', 'container')
       {% elif chart.library == 'metric' %}
       renderMetricChart('#chart', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}')
       {% endif %}

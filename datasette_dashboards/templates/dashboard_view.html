@@ -97,7 +97,7 @@
     <script type="text/javascript">
       {% for chart_slug, chart in dashboard.charts.items() %}
       {% if chart.library == 'vega' %}
-      renderVegaChart('#chart-{{ chart_slug }}', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}')
+      renderVegaChart('#chart-{{ chart_slug }}', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}', '{{ base_url }}')
       {% elif chart.library == 'metric' %}
       renderMetricChart('#chart-{{ chart_slug }}', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}')
       {% endif %}
