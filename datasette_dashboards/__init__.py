@@ -75,9 +75,8 @@ async def fill_dashboard_filter_dropdowns(dashboard, request, datasette):
             db = filter.get('db')
             query = filter.get('query')
             value_key = 'name'
-            base_url = datasette.setting('base_url')
             response = await datasette.client.get(
-                f'{base_url}{db}.json?' + urllib.parse.urlencode({"sql": query, "_shape": "array"}),
+                f'/{db}.json?' + urllib.parse.urlencode({"sql": query, "_shape": "array"}),
                 headers=request.headers,    
             )
             filter['options'] = [
