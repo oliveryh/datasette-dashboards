@@ -1,0 +1,8 @@
+datasette==0.60.2
+datasette-atom
+datasette-vega
+datasette-auth-github @ git+https://github.com/oliveryh/datasette-auth-github.git@9b623a08ca2e8fff7d51a7243911832125392e8e
+requests
+jsonlines
+sqlite-utils
+github-to-sqlite

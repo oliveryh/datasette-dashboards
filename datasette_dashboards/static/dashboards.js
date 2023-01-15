@@ -1,5 +1,21 @@
-function renderVegaChart(el, chart, query_string, full_height) {
+const deepSearch = (target, chart, query_string, base_url, query) => {
+  if (typeof target === 'object') {
+    for (let key in target) {
+      if (typeof target[key] === 'object') {
+        deepSearch(target[key], chart, query_string, base_url, query)
+      } else {
+        if (key === 'url') {
+          target[key] = `${base_url}${chart.db}.csv?sql=${query}&${query_string}`
+        }
+      }
+    }
+  }
+  return target
+}
+
+function renderVegaChart(el, chart, query_string, base_url, full_height) {
   const query = encodeURIComponent(chart.query)
+  deepSearch(chart.display, chart, query_string, base_url, query)
   let defaultSignals = [
     {
       'name': 'width',
@@ -32,7 +48,7 @@ function renderVegaChart(el, chart, query_string, full_height) {
     data: [
       {
         name: 'table',
-        url: `/${chart.db}.csv?sql=${query}&${query_string}`,
+        url: `${base_url}${chart.db}.csv?sql=${query}&${query_string}`,
         format: { 'type': 'csv', 'parse': 'auto' }
       }
     ],
@@ -43,8 +59,9 @@ function renderVegaChart(el, chart, query_string, full_height) {
   vegaEmbed(el, spec);
 }
 
-function renderVegaLiteChart(el, chart, query_string, full_height) {
+function renderVegaLiteChart(el, chart, query_string, base_url, full_height) {
   const query = encodeURIComponent(chart.query)
+  deepSearch(chart.display, chart, query_string, base_url, query)
   const spec = {
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     description: chart.title,
@@ -61,7 +78,7 @@ function renderVegaLiteChart(el, chart, query_string, full_height) {
       }
     },
     data: {
-      url: `/${chart.db}.csv?sql=${query}&${query_string}`,
+      url: `${base_url}${chart.db}.csv?sql=${query}&${query_string}`,
       format: { 'type': 'csv' }
     },
     ...chart.display
@@ -70,9 +87,9 @@ function renderVegaLiteChart(el, chart, query_string, full_height) {
   vegaEmbed(el, spec);
 }
 
-async function renderMetricChart(el, chart, query_string, full_height) {
+async function renderMetricChart(el, chart, query_string, base_url, full_height) {
   const query = encodeURIComponent(chart.query)
-  const results = await fetch(`/${chart.db}.json?sql=${query}&${query_string}&_shape=array`)
+  const results = await fetch(`${base_url}${chart.db}.json?sql=${query}&${query_string}&_shape=array`)
   const data = await results.json()
   const metric = data[0][chart.display.field]
 
@@ -100,9 +117,9 @@ async function renderMetricChart(el, chart, query_string, full_height) {
   document.querySelector(el).appendChild(wrapper)
 }
 
-async function renderTableChart(el, chart, query_string, full_height) {
+async function renderTableChart(el, chart, query_string, base_url, full_height) {
   const query = encodeURIComponent(chart.query)
-  const results = await fetch(`/${chart.db}.json?sql=${query}&${query_string}`)
+  const results = await fetch(`${base_url}${chart.db}.json?sql=${query}&${query_string}`)
   const data = await results.json()
 
   const thead = document.createElement('thead')
@@ -138,10 +155,10 @@ async function renderTableChart(el, chart, query_string, full_height) {
   document.querySelector(el).appendChild(wrapper)
 }
 
-async function renderMapChart(el, chart, query_string, full_height) {
+async function renderMapChart(el, chart, query_string, base_url, full_height) {
   document.addEventListener("DOMContentLoaded", async () => {
     const query = encodeURIComponent(chart.query)
-    const results = await fetch(`/${chart.db}.json?sql=${query}&${query_string}&_shape=array`)
+    const results = await fetch(`${base_url}${chart.db}.json?sql=${query}&${query_string}&_shape=array`)
     const data = await results.json()
 
     const wrapper = document.createElement('div')
@@ -179,7 +196,7 @@ async function renderMapChart(el, chart, query_string, full_height) {
   })
 }
 
-async function renderChart(el, chart, query_string, full_height = false) {
+async function renderChart(el, chart, query_string, base_url, full_height = false) {
   renderers = new Map()
   renderers.set('vega', renderVegaChart)
   renderers.set('vega-lite', renderVegaLiteChart)
@@ -189,7 +206,7 @@ async function renderChart(el, chart, query_string, full_height = false) {
 
   render = renderers.get(chart.library)
   if (render) {
-    await render(el, chart, query_string, full_height)
+    await render(el, chart, query_string, base_url, full_height)
   }
 }
 

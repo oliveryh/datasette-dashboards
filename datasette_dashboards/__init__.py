@@ -149,6 +149,7 @@ async def _dashboard_view(
                 "slug": slug,
                 "query_parameters": query_parameters,
                 "query_string": query_string,
+                "base_url": datasette.setting("base_url"),
                 "dashboard": dashboard,
                 "embed": embed,
             },
@@ -199,6 +200,7 @@ async def _dashboard_chart(
             {
                 "slug": slug,
                 "query_string": query_string,
+                "base_url": datasette.setting("base_url"),
                 "dashboard": dashboard,
                 "chart": chart,
                 "embed": embed,
