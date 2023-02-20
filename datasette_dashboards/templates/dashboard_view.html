@@ -64,7 +64,7 @@
             {% endfor %}
           </select>
         </p>
-        
+
         {% endif %}
         {% endfor %}
         <input type="submit" value="Apply">
@@ -93,6 +93,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script src="{{ urls.static_plugins('datasette_dashboards', 'dashboards.js') }}"></script>
     <script type="text/javascript">
       {% for chart_slug, chart in dashboard.charts.items() %}
@@ -100,6 +101,8 @@
       renderVegaChart('#chart-{{ chart_slug }}', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}', '{{ base_url }}')
       {% elif chart.library == 'metric' %}
       renderMetricChart('#chart-{{ chart_slug }}', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}')
+      {% elif chart.library == 'table' %}
+      renderTable('#chart-{{ chart_slug }}', JSON.parse('{{ chart|tojson }}'), '{{ query_string|safe }}')
       {% endif %}
       {% endfor %}
     </script>

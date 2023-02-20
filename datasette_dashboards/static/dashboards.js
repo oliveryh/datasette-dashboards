@@ -69,3 +69,44 @@ async function renderMetricChart(el, chart, query_string) {
 
   document.querySelector(el).appendChild(wrapper)
 }
+
+async function renderTable(el, chart, query_string) {
+  const query = encodeURIComponent(chart.query)
+  const fields = chart.display.fields
+  const results = await fetch(`/${chart.db}.json?sql=${query}&${query_string}&_shape=array`)
+  const data = await results.json()
+
+  const columnDefs = fields.map(field => {
+    let columnDef = { field: field['field'] }
+
+    if (field.url) {
+      columnDef.cellRenderer = (params) => {
+        console.log(params)
+        var link = document.createElement('a');
+        link.href = params.data.url;
+        link.innerText = params.value;
+        return link;
+      }
+    }
+
+    return columnDef
+  })
+
+  const rowData = data
+
+  const gridOptions = {
+    columnDefs: columnDefs,
+    rowData: rowData,
+    onFirstDataRendered: onFirstDataRendered,
+  };
+
+  function onFirstDataRendered(params) {
+    params.columnApi.autoSizeAllColumns()
+  }
+
+  const gridDiv = document.querySelector(el);
+  gridDiv.style.minHeight = '500px'
+  gridDiv.style.paddingBottom = '40px'
+  gridDiv.className += ' ag-theme-alpine'
+  new agGrid.Grid(gridDiv, gridOptions);
+}
