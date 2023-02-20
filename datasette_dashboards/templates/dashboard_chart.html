@@ -66,6 +66,7 @@
   <script src="{{ urls.static_plugins('datasette_dashboards', 'vega-lite.min.js') }}"></script>
   <script src="{{ urls.static_plugins('datasette_dashboards', 'vega-embed.min.js') }}"></script>
   <script src="{{ urls.static_plugins('datasette_dashboards', 'dashboards.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
   <script type="text/javascript">
     renderChart('#chart', {{ chart|tojson }}, '{{ query_string|safe }}', '{{ base_url }}', true)
   </script>
