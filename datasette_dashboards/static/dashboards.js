@@ -224,6 +224,7 @@ async function renderGridChart(el, chart, query_string) {
     columnDefs: columnDefs,
     rowData: rowData,
     onFirstDataRendered: onFirstDataRendered,
+    enableCellTextSelection: true,
   };
 
   function onFirstDataRendered(params) {
